@@ -1,7 +1,7 @@
 #include "ProcessCommandLine.hpp"
-#include "RunCaesarCipher.hpp"
 #include "TransformChar.hpp"
 #include "CaesarCipher.hpp"
+#include "CipherMode.hpp"
 
 #include <cctype>
 #include <fstream>
@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     const std::vector<std::string> cmdLineArgs{argv, argv + argc};
 
     // Options that might be set by the command-line arguments
-    ProgramSettings s{false, false, "", "", "", false};
+    ProgramSettings s{false, false, "", "", "", CipherMode::Encrypt};
 
     // Process command line arguments
     const bool cmdLineStatus{
@@ -86,14 +86,11 @@ int main(int argc, char* argv[])
         }
     }
 
-    // This class will turn a string or int input into a size_t
+    // This class will turn a string or int input into a size_t, as well as implementing the cipher
     CaesarCipher c{s.cipherKey};
 
-    std::size_t caesarKey = c.key;
-    
-
     // Run the Caesar cipher (using the specified key and encrypt/decrypt flag) on the input text
-    std::string outputText{runCaesarCipher(inputText, caesarKey, s.encrypt)};
+    std::string outputText{c.applyCipher(inputText, s.e)};
 
     // Output the encrypted/decrypted text to stdout/file
     if (!s.outputFile.empty()) {
